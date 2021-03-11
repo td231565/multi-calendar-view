@@ -27,7 +27,6 @@
       :disableViews="['years', 'year']"
       class="vuecal--rounded-theme"
       :selectedDate="selectedDate"
-      :min-date="minDate"
       @cell-focus="chooseDate" />
   </div>
 </template>
@@ -35,7 +34,7 @@
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed} from 'vue'
+import {ref} from 'vue'
 
 export default {
   name: 'Calendar',
@@ -72,7 +71,6 @@ export default {
       return { switch: switchView }
     })()
 
-    const minDate = computed(() => new Date().subtractDays(1))
     const selectedDate = ref(null)
     const chooseDate = (date) => {
       selectedDate.value = date
@@ -85,7 +83,6 @@ export default {
       switchView,
       callMonth: callMonthView.switch,
       selectedDate,
-      minDate,
       chooseDate
     }
   }
