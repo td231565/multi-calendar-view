@@ -1,0 +1,86 @@
+// Margin
+@each $key, $value in $spacer {
+  .m-#{$key} {
+    margin: $value !important;
+  }
+  .mt-#{$key} {
+    margin-top: $value !important;
+  }
+  .mr-#{$key} {
+    margin-right: $value !important;
+  }
+  .mb-#{$key} {
+    margin-bottom: $value !important;
+  }
+  .ml-#{$key} {
+    margin-left: $value !important;
+  }
+}
+
+.m-auto {
+  margin: auto;
+}
+
+// Padding
+@each $key, $value in $spacer {
+  .p-#{$key} {
+    padding: $value !important;
+  }
+  .pt-#{$key} {
+    padding-top: $value !important;
+  }
+  .pr-#{$key} {
+    padding-right: $value !important;
+  }
+  .pb-#{$key} {
+    padding-bottom: $value !important;
+  }
+  .pl-#{$key} {
+    padding-left: $value !important;
+  }
+}
+
+.fx {
+  display: flex;
+  &-wrap {
+    flex-wrap: wrap;
+  }
+  &-jcc {
+    justify-content: center;
+  }
+  &-jed {
+    justify-content: flex-end;
+  }
+  &-jsb {
+    justify-content: space-between;
+  }
+  &-aic {
+    align-items: center;
+  }
+  &-aie {
+    align-items: flex-end;
+  }
+  &-acc {
+    align-content: center;
+  }
+  &-asc {
+    align-self: center;
+  }
+}
+
+// Color
+@each $key, $value in $themes {
+  .#{$key} {
+    color: $value !important;
+  }
+  .bg-#{$key} {
+    background-color: $value !important;
+  }
+  .bd-#{$key} {
+    border-color: $value !important;
+  }
+}
+
+.circle {
+  border-radius: 50%;
+}

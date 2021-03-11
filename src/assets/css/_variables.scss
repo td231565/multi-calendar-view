@@ -1,0 +1,22 @@
+// Color
+$primary:               #7F74B4;
+$secondary:             #DEDAF4;
+$gray:                  #c5c8ce;
+$white:                 #ffffff;
+
+$themes:(
+  'primary': $primary,
+  'secondary': $secondary,
+  'gray': $gray,
+  'white': $white
+);
+
+// Spacing
+$space: 1rem !default;
+$spacer: (
+  0: 0,
+  1: $space * 0.5,
+  2: $space,
+  3: $space * 1.5,
+  4: $space * 2
+);

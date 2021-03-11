@@ -1,0 +1,42 @@
+$select_padding: 8px 12px;
+
+.custom-select {
+  width: 100px;
+  padding: $select_padding;
+  position: relative;
+  border-radius: 25px;
+  color: $primary;
+  background-color: $secondary;
+  cursor: pointer;
+  &__list {
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: $secondary;
+    border-radius: 10px;
+    z-index: 9;
+  }
+  &__item {
+    padding: $select_padding;
+    &:first-child {
+      border-radius: 10px 10px 0 0;
+    }
+    &:last-child {
+      border-radius: 0 0 10px 10px;
+    }
+    &:hover {
+      color: $white;
+      background-color: $primary;
+    }
+  }
+  &__arrow {
+    width: 15px;
+    height: 10px;
+    background-color: $primary;
+    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+    &.active {
+      clip-path: polygon(0% 100%, 50% 0%,100% 100%);
+    }
+  }
+}
