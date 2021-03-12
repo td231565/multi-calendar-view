@@ -1,0 +1,15 @@
+.custom-theme.vuecal--month-view {
+  .vuecal__cell {
+    cursor: pointer;
+    &--today, &--current {
+      .vuecal__cell-content {
+        background-color: rgba($primary, 0.4);
+      }
+    }
+    &--selected {
+      .vuecal__cell-content {
+        border: 1px solid $primary;
+      }
+    }
+  }
+}

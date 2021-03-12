@@ -1,8 +1,9 @@
 .btn {
-  padding: 6px 10px;
+  padding: 0.5rem 2rem;
+  font-size: 1rem;
   background-color: #fcfcfc;
   border: 1px solid $gray;
-  border-radius: 4px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all ease 0.4s;
   &:hover {
@@ -17,11 +18,9 @@
 
 @each $key, $value in $themes {
   .btn-#{$key} {
-    color: $value;
+    color: $white;
+    background-color: $value;
     border-color: $value;
-    &:hover {
-      background-color: rgba($value, 0.7);
-      border-color: $value;
-    }
+    box-shadow: 0 4px 6px #aaa;
   }
 }
