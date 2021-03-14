@@ -48,4 +48,31 @@
   &-shadow {
     box-shadow: 0 4px 4px #ddd;
   }
+
+  &-weeks-bar {
+    width: 100%;
+    &__item {
+      width: calc(100% / 7);
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      &--current::after {
+        width: 0.5rem;
+        height: 0.5rem;
+        display: block;
+        content: '';
+        position: absolute;
+        bottom: -0.6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4bf1fd;
+        border-radius: 50%;
+      }
+      &--selected {
+        color: #fff;
+        background-color: $primary;
+        border-radius: 10px;
+      }
+    }
+  }
 }

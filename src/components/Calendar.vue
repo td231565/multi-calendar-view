@@ -1,6 +1,7 @@
 <template>
-  <section class="calendar-shadow" style="padding: 6px 10px 12px 10px;">
-    <div v-show="isDayView || isWeekView" class="fx fx-jsb fx-aic mb-1">
+  <section class="calendar-shadow" style="padding: 6px 10px 18px 10px;">
+    <!-- header -->
+    <div v-show="!isMonthView" class="fx fx-jsb fx-aic mb-1">
       <div v-if="isDayView" class="fx fx-aic">
         <button class="calendar-arrow-btn calendar-arrow-btn__prev mr-3" @click="changeDate('prev')"></button>
         <p>{{selectedDate}}</p>
@@ -22,19 +23,28 @@
         </div>
       </div>
     </div>
+    <!-- week bar -->
     <div class="fx fx-jsb fx-aic">
-      <!-- switch month -->
       <button class="calendar-switch-btn bg-secondary circle mr-1" @click="callMonth"></button>
-      <div class="fx fx-jsb" style="width: 100%;">
-        <div v-for="(date, idx) in weekDateNumber" :key="date">
-          <p>{{weekList[idx]}}</p>
-          <p>{{date}}</p>
+      <div class="calendar-weeks-bar fx fx-jsb">
+        <div v-for="(date, idx) in weekDateNumber"
+          :key="date"
+          class="calendar-weeks-bar__item p-1"
+          :class="{
+            'calendar-weeks-bar__item--current': date === getLocalDateString(new Date()),
+            'calendar-weeks-bar__item--selected': isDayView && date === getLocalDateString(selectedDate)
+          }"
+          @click="chooseDate(date)">
+          <p class="mb-1">{{weekList[idx]}}</p>
+          <p v-if="!isMonthView">{{new Date(date).getDate()}}</p>
         </div>
       </div>
+      <!-- switch month -->
       <button v-if="activeView.key === 'month'" class="calendar-close-btn" @click="callMonth">╳</button>
     </div>
   </section>
-  <div :style="isDayView || isWeekView ? 'height: 70vh;' : ''" ref="container">
+  <!-- calendar -->
+  <div :style="!isMonthView ? 'height: 70vh;' : ''" ref="container">
     <VueCal ref="vuecal"
       hide-view-selector
       hide-title-bar
@@ -50,6 +60,7 @@
       @cell-focus="chooseDate"
       @view-change="handleViewChange" />
   </div>
+  <!-- button -->
   <div class="fx fx-jcc mt-4">
     <button class="btn btn-primary">+ 新增預約</button>
   </div>
@@ -86,15 +97,15 @@ export default {
     // 呼叫月曆
     const callMonthView = (() => {
       let prevView = activeView.value
-      const switchView = () => {
+      const switchViewBetweenMonth = () => {
         if (activeView.value.key !== 'month') {
           prevView = activeView.value
-          activeView.value = viewOptions.find(item => item.key === 'month')
+          switchView('month')
         } else {
-          activeView.value = prevView
+          switchView(prevView.key)
         }
       }
-      return { switch: switchView }
+      return { switch: switchViewBetweenMonth }
     })()
 
     // Vue Calendar 實體
@@ -103,12 +114,15 @@ export default {
 
     // 選擇日期
     const selectedDate = ref('') // 目前日期
-    const chooseDate = (date = new Date()) => {
+    const getLocalDateString = (date) => {
       let [yyyy, mm, dd] = new Date(date).toLocaleDateString().split('/')
       mm = mm.padStart(2, '0')
       dd = dd.padStart(2, '0')
-      let dateStr = `${yyyy}-${mm}-${dd}`
-      selectedDate.value = dateStr
+      return `${yyyy}-${mm}-${dd}`
+    }
+    const chooseDate = (date = new Date()) => {
+      selectedDate.value = getLocalDateString(date)
+      switchView('day')
     }
     chooseDate()
     // 往前/後移動日期
@@ -123,20 +137,19 @@ export default {
     const weekDateNumber = ref([])
     const showWeekDays = (startDate) => {
       const start = new Date(startDate)
-      let startD = start.getDate()
-      // 今天是不是星期一
-      if (start.getDay() !== 1) {
-        startD = start.getDate() - (start.getDay() - 1)
-      }
+      let startD = start.getDay() === 1
+        ? start.getDate() // 星期一
+        : start.getDay() === 0
+          ? start.getDate() - (7 - 1) // 星期日
+          : start.getDate() - (start.getDay() - 1) // 其他
       weekDateNumber.value = new Array(7).fill(0).map((num, idx) => {
-        return new Date(new Date(startDate).setDate(startD + idx)).getDate()
+        return getLocalDateString(new Date(new Date(startDate).setDate(startD + idx)))
       })
     }
     showWeekDays(selectedDate.value)
 
     // [listen] 監聽畫面變化
     const handleViewChange = (e) => {
-      console.log(e)
       let {view, startDate} = e
       if (!view) { return }
       switchView(view)
@@ -174,6 +187,7 @@ export default {
       selectedDate,
       chooseDate,
       changeDate,
+      getLocalDateString,
       // Event Listener
       calendarEvents,
       handleViewChange,
