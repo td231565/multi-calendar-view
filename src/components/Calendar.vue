@@ -22,11 +22,17 @@
             >{{item.title}}</p>
         </div>
       </div>
+      <div class="custom-select" @click="isSelectActive = !isSelectActive">
+        <div class="fx fx-jsb fx-aic">
+          <p>{{userName}}</p>
+          <p class="custom-select__arrow ml-1" :class="{active: isSelectActive}"></p>
+        </div>
+      </div>
     </div>
     <!-- week bar -->
     <div class="fx fx-jsb fx-aic">
       <button class="calendar-switch-btn bg-secondary circle mr-1" @click="callMonth"></button>
-      <div class="calendar-weeks-bar fx fx-jsb">
+      <div v-if="!isMonthView" class="calendar-weeks-bar fx fx-jsb">
         <div v-for="(date, idx) in weekDateNumber"
           :key="date"
           class="calendar-weeks-bar__item p-1"
@@ -76,7 +82,8 @@ export default {
   components: {
     VueCal
   },
-  setup () {
+  setup (props) {
+    const userName = ref(props.username)
     // 目前 view
     const activeView = ref({})
     const isMonthView = computed(() => activeView.value.key === 'month')
@@ -173,6 +180,7 @@ export default {
     }
 
     return {
+      userName,
       activeView,
       isMonthView,
       isWeekView,
