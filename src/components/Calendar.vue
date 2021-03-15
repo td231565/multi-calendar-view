@@ -12,7 +12,7 @@
       <div class="fx">
         <!-- switch day/week -->
         <CustomSelector :current="activeView" :optionList="viewSelectOptions" @on-change="switchView" />
-        <CustomSelector :current="userName" :optionList="userSetting" @on-change="handleUserLogState" class="ml-1" />
+        <CustomSelector :current="currentUser" :optionList="userSetting" @on-change="handleUserLogState" class="ml-1" />
       </div>
     </div>
     <!-- week bar -->
@@ -63,7 +63,7 @@
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed} from 'vue'
+import {ref, computed, toRefs, reactive} from 'vue'
 import CustomSelector from './CustomSelector'
 
 export default {
@@ -74,12 +74,13 @@ export default {
   },
   props: {
     username: {
-      type: Object
+      type: String
     }
   },
   emits: ['logout'],
   setup (props, {emit}) {
-    const userName = ref(props.username)
+    const {username} = toRefs(props)
+    const currentUser = reactive({key: 'user', title: username})
     // 目前 view
     const activeView = ref({})
     const isMonthView = computed(() => activeView.value.key === 'month')
@@ -175,16 +176,23 @@ export default {
         class: 'blue-event'
       })
     }
-    const userSetting = ref([{key: 'login', title: '登入'}])
+    const userSetting = ref([{key: 'login', title: '登入'}, {key: 'logout', title: '登出'}])
+    const userSettingSelect = () => {
+      userSetting.value = userSetting.value.filter(item => {
+        console.log(username.value)
+        const showOption = username.value === '訪客' ? 'login' : 'logout'
+        console.log(showOption)
+        return item.key === showOption
+      })
+    }
+    userSettingSelect()
     const handleUserLogState = (key) => {
       emit(key)
-      userSetting.value = key === 'logout'
-        ? [{key: 'login', title: '登入'}]
-        : [{key: 'logout', title: '登出'}]
+      userSettingSelect()
     }
 
     return {
-      userName,
+      currentUser,
       activeView,
       isMonthView,
       isWeekView,

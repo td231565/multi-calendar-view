@@ -5,7 +5,7 @@
 <script>
 import liff from '@line/liff'
 import Calendar from './components/Calendar.vue'
-import {ref, reactive} from 'vue'
+import {ref} from 'vue'
 
 export default {
   name: 'App',
@@ -13,7 +13,7 @@ export default {
     Calendar
   },
   setup () {
-    const userName = reactive({key: 'user', title: '訪客'})
+    const userName = ref('訪客')
     const isLogin = ref(false)
     const liffId = '1654944538-wRrGzXyX'
 
@@ -25,7 +25,7 @@ export default {
       changeUserName()
     }
     const changeUserName = (name = '訪客') => {
-      userName.title = name
+      userName.value = name
     }
     const getUserProfile = () => {
       liff.getProfile().then(profile => {
