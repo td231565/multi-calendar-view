@@ -61,25 +61,26 @@
       position: relative;
       &__content {
         width: 100%;
+        padding: 0.5rem 0;
         max-width: 70px;
         cursor: pointer;
-        &--current::after {
-          width: 0.5rem;
-          height: 0.5rem;
-          display: block;
-          content: '';
-          position: absolute;
-          bottom: -0.6rem;
-          left: 50%;
-          transform: translateX(-50%);
-          background-color: #4bf1fd;
-          border-radius: 50%;
-        }
-        &--selected {
-          color: #fff;
-          background-color: $primary;
-          border-radius: 10px;
-        }
+      }
+      &--current::after {
+        width: 0.5rem;
+        height: 0.5rem;
+        display: block;
+        content: '';
+        position: absolute;
+        bottom: -0.6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #4bf1fd;
+        border-radius: 50%;
+      }
+      &--selected {
+        color: #fff;
+        background-color: $primary;
+        border-radius: 10px;
       }
     }
   }

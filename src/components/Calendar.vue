@@ -11,7 +11,7 @@
       <div class="fx">
         <!-- switch day/week -->
         <CustomSelector :current="activeView" :optionList="viewSelectOptions" @on-change="switchView" />
-        <CustomSelector :current="userName" :optionList="[{key: 'logout', title: '登出'}]" @on-change="liffLogout" class="ml-1" />
+        <CustomSelector :current="userName" :optionList="userSetting" @on-change="liffLogout" class="ml-1" />
       </div>
     </div>
     <!-- week bar -->
@@ -76,6 +76,7 @@ export default {
       type: Object
     }
   },
+  emits: ['logout'],
   setup (props, {emit}) {
     const userName = ref(props.username)
     // 目前 view
@@ -173,6 +174,7 @@ export default {
         class: 'blue-event'
       })
     }
+    const userSetting = [{key: 'logout', title: '登出'}]
     const liffLogout = (key) => {
       if (key === 'logout') {
         emit('logout')
@@ -201,7 +203,8 @@ export default {
       handleViewChange,
       addNewEvent,
       liffLogout,
-      submitText
+      submitText,
+      userSetting
     }
   }
 }
