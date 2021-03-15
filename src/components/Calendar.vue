@@ -2,6 +2,7 @@
   <section class="calendar-shadow" style="padding: 6px 10px 18px 10px;">
     <!-- header -->
     <div v-show="!isMonthView" class="fx fx-jsb fx-aic mb-1">
+      <!-- datepicker -->
       <div v-if="isDayView" class="fx fx-jsb fx-aic calendar-datepicker">
         <button class="calendar-arrow-btn calendar-arrow-btn__prev" @click="changeDate('prev')"></button>
         <p>{{selectedDate}}</p>
@@ -11,7 +12,7 @@
       <div class="fx">
         <!-- switch day/week -->
         <CustomSelector :current="activeView" :optionList="viewSelectOptions" @on-change="switchView" />
-        <CustomSelector :current="userName" :optionList="userSetting" @on-change="liffLogout" class="ml-1" />
+        <CustomSelector :current="userName" :optionList="userSetting" @on-change="handleUserLogState" class="ml-1" />
       </div>
     </div>
     <!-- week bar -->
@@ -174,11 +175,12 @@ export default {
         class: 'blue-event'
       })
     }
-    const userSetting = [{key: 'logout', title: '登出'}]
-    const liffLogout = (key) => {
-      if (key === 'logout') {
-        emit('logout')
-      }
+    const userSetting = ref([{key: 'login', title: '登入'}])
+    const handleUserLogState = (key) => {
+      emit(key)
+      userSetting.value = key === 'logout'
+        ? [{key: 'login', title: '登入'}]
+        : [{key: 'logout', title: '登出'}]
     }
 
     return {
@@ -202,7 +204,7 @@ export default {
       calendarEvents,
       handleViewChange,
       addNewEvent,
-      liffLogout,
+      handleUserLogState,
       submitText,
       userSetting
     }

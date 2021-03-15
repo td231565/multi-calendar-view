@@ -1,5 +1,5 @@
 <template>
-  <Calendar :username="userName" @logout="liffLogout" />
+  <Calendar :username="userName" @logout="liffLogout" @login="liffLogin" />
 </template>
 
 <script>
@@ -22,11 +22,15 @@ export default {
     }
     const liffLogout = () => {
       liff.logout()
+      changeUserName()
+    }
+    const changeUserName = (name = '訪客') => {
+      userName.title = name
     }
     const getUserProfile = () => {
       liff.getProfile().then(profile => {
         const {displayName} = profile
-        userName.title = displayName
+        changeUserName(displayName)
       }).catch(e => {
         console.log('error', e)
       })
@@ -35,7 +39,9 @@ export default {
       liff.init({ liffId }).then(() => {
         isLogin.value = liff.isLoggedIn()
       }).then(() => {
-        isLogin.value ? getUserProfile() : liffLogin()
+        if (isLogin.value) {
+          getUserProfile()
+        }
       })
     }
     initLiff()
@@ -43,7 +49,8 @@ export default {
     return {
       isLogin,
       userName,
-      liffLogout
+      liffLogout,
+      liffLogin
     }
   }
 }
