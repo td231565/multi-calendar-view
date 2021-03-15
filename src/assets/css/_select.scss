@@ -8,6 +8,9 @@ $select_padding: 8px 12px;
   color: $primary;
   background-color: $secondary;
   cursor: pointer;
+  @include screen375() {
+    width: 90px;
+  }
   &__list {
     width: 100%;
     position: absolute;
@@ -15,6 +18,7 @@ $select_padding: 8px 12px;
     left: 0;
     background-color: $secondary;
     border-radius: 10px;
+    overflow: hidden;
     z-index: 9;
   }
   &__item {

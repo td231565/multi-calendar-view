@@ -3,5 +3,8 @@
 module.exports = {
   publicPath: process.env.NODE_ENV === 'production'
     ? '/multi-calendar-view/'
-    : '/'
+    : '/',
+  devServer: {
+    disableHostCheck: true
+  }
 }

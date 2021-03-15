@@ -13,9 +13,9 @@ export default {
     Calendar
   },
   setup () {
-    const liffId = '1654944538-wRrGzXyX'
+    const userName = ref({key: 'user', title: '訪客'})
     const isLogin = ref(false)
-    const userName = ref('')
+    const liffId = '1654944538-wRrGzXyX'
 
     const switchUserLogin = () => {
       isLogin.value ? liff.logout() : liff.login()
@@ -23,8 +23,7 @@ export default {
     const getUserProfile = () => {
       liff.getProfile().then(profile => {
         const {displayName} = profile
-        userName.value = displayName
-        console.log(userName.value)
+        userName.value = {key: 'user', title: displayName}
       }).catch(e => {
         console.log('error', e)
       })
@@ -43,7 +42,8 @@ export default {
     initLiff()
 
     return {
-      isLogin
+      isLogin,
+      userName
     }
   }
 }

@@ -2,31 +2,16 @@
   <section class="calendar-shadow" style="padding: 6px 10px 18px 10px;">
     <!-- header -->
     <div v-show="!isMonthView" class="fx fx-jsb fx-aic mb-1">
-      <div v-if="isDayView" class="fx fx-aic">
-        <button class="calendar-arrow-btn calendar-arrow-btn__prev mr-3" @click="changeDate('prev')"></button>
+      <div v-if="isDayView" class="fx fx-jsb fx-aic calendar-datepicker">
+        <button class="calendar-arrow-btn calendar-arrow-btn__prev" @click="changeDate('prev')"></button>
         <p>{{selectedDate}}</p>
-        <button class="calendar-arrow-btn calendar-arrow-btn__next ml-3" @click="changeDate('next')"></button>
+        <button class="calendar-arrow-btn calendar-arrow-btn__next" @click="changeDate('next')"></button>
       </div>
       <h1 v-else-if="isWeekView" class="ml-2">預約行事曆</h1>
-      <!-- switch day/week -->
-      <div class="custom-select" @click="isSelectActive = !isSelectActive">
-        <div class="fx fx-jsb fx-aic">
-          <p>{{activeView.title}}</p>
-          <p class="custom-select__arrow ml-1" :class="{active: isSelectActive}"></p>
-        </div>
-        <div v-if="isSelectActive" class="custom-select__list">
-          <p v-for="item in viewSelectOptions"
-            :key="item.key"
-            class="custom-select__item"
-            @click="switchView(item.key)"
-            >{{item.title}}</p>
-        </div>
-      </div>
-      <div class="custom-select" @click="isSelectActive = !isSelectActive">
-        <div class="fx fx-jsb fx-aic">
-          <p>{{userName}}</p>
-          <p class="custom-select__arrow ml-1" :class="{active: isSelectActive}"></p>
-        </div>
+      <div class="fx">
+        <!-- switch day/week -->
+        <CustomSelector :current="activeView" :optionList="viewSelectOptions" @on-change="switchView" />
+        <CustomSelector :current="userName" :optionList="[{key: 'logout', title: '登出'}]" @on-change="liffLogout" class="ml-1" />
       </div>
     </div>
     <!-- week bar -->
@@ -35,14 +20,16 @@
       <div v-if="!isMonthView" class="calendar-weeks-bar fx fx-jsb">
         <div v-for="(date, idx) in weekDateNumber"
           :key="date"
-          class="calendar-weeks-bar__item p-1"
-          :class="{
-            'calendar-weeks-bar__item--current': date === getLocalDateString(new Date()),
-            'calendar-weeks-bar__item--selected': isDayView && date === getLocalDateString(selectedDate)
-          }"
-          @click="chooseDate(date)">
-          <p class="mb-1">{{weekList[idx]}}</p>
-          <p v-if="!isMonthView">{{new Date(date).getDate()}}</p>
+          class="calendar-weeks-bar__item fx fx-jcc">
+          <div class="calendar-weeks-bar__item__content"
+            :class="{
+              'calendar-weeks-bar__item--current': date === getLocalDateString(new Date()),
+              'calendar-weeks-bar__item--selected': isDayView && date === getLocalDateString(selectedDate)
+            }"
+            @click="chooseDate(date)">
+            <p class="mb-1">{{weekList[idx]}}</p>
+            <p v-if="!isMonthView">{{new Date(date).getDate()}}</p>
+          </div>
         </div>
       </div>
       <!-- switch month -->
@@ -68,7 +55,7 @@
   </div>
   <!-- button -->
   <div class="fx fx-jcc mt-4">
-    <button class="btn btn-primary">+ 新增預約</button>
+    <button class="btn btn-primary">{{submitText}}</button>
   </div>
 </template>
 
@@ -76,13 +63,20 @@
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
 import {ref, computed} from 'vue'
+import CustomSelector from './CustomSelector'
 
 export default {
   name: 'Calendar',
   components: {
-    VueCal
+    VueCal,
+    CustomSelector
   },
-  setup (props) {
+  props: {
+    username: {
+      type: Object
+    }
+  },
+  setup (props, {emit}) {
     const userName = ref(props.username)
     // 目前 view
     const activeView = ref({})
@@ -170,6 +164,7 @@ export default {
       }
     }
 
+    const submitText = computed(() => isMonthView.value ? '選擇' : '+ 新增預約')
     const addNewEvent = () => {
       calendarEvents.value.push({
         start: '2020-03-20 12:00',
@@ -177,6 +172,11 @@ export default {
         title: 'A new event',
         class: 'blue-event'
       })
+    }
+    const liffLogout = (key) => {
+      if (key === 'logout') {
+        emit('logout')
+      }
     }
 
     return {
@@ -199,7 +199,9 @@ export default {
       // Event Listener
       calendarEvents,
       handleViewChange,
-      addNewEvent
+      addNewEvent,
+      liffLogout,
+      submitText
     }
   }
 }
