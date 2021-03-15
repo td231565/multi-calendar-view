@@ -1,5 +1,5 @@
 <template>
-  <Calendar :username="userName" />
+  <Calendar :username="userName" @logout="liffLogout" />
 </template>
 
 <script>
@@ -17,8 +17,11 @@ export default {
     const isLogin = ref(false)
     const liffId = '1654944538-wRrGzXyX'
 
-    const switchUserLogin = () => {
-      isLogin.value ? liff.logout() : liff.login()
+    const liffLogin = () => {
+      liff.login()
+    }
+    const liffLogout = () => {
+      liff.logout()
     }
     const getUserProfile = () => {
       liff.getProfile().then(profile => {
@@ -32,18 +35,15 @@ export default {
       liff.init({ liffId }).then(() => {
         isLogin.value = liff.isLoggedIn()
       }).then(() => {
-        if (!isLogin.value) {
-          switchUserLogin()
-        } else {
-          getUserProfile()
-        }
+        isLogin.value ? getUserProfile() : liffLogin()
       })
     }
     initLiff()
 
     return {
       isLogin,
-      userName
+      userName,
+      liffLogout
     }
   }
 }
