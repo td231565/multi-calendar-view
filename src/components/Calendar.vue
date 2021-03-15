@@ -63,7 +63,7 @@
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed, toRefs, reactive} from 'vue'
+import {ref, computed, toRefs, reactive, watchEffect} from 'vue'
 import CustomSelector from './CustomSelector'
 
 export default {
@@ -77,7 +77,7 @@ export default {
       type: String
     }
   },
-  emits: ['logout'],
+  emits: ['logout', 'login'],
   setup (props, {emit}) {
     const {username} = toRefs(props)
     const currentUser = reactive({key: 'user', title: username})
@@ -176,19 +176,14 @@ export default {
         class: 'blue-event'
       })
     }
-    const userSetting = ref([{key: 'login', title: '登入'}, {key: 'logout', title: '登出'}])
-    const userSettingSelect = () => {
-      userSetting.value = userSetting.value.filter(item => {
-        console.log(username.value)
+    const userSettingDefault = [{key: 'login', title: '登入'}, {key: 'logout', title: '登出'}]
+    const userSetting = computed(() => userSettingDefault.filter(item => {
         const showOption = username.value === '訪客' ? 'login' : 'logout'
-        console.log(showOption)
         return item.key === showOption
       })
-    }
-    userSettingSelect()
+    )
     const handleUserLogState = (key) => {
       emit(key)
-      userSettingSelect()
     }
 
     return {

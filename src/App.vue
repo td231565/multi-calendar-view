@@ -32,7 +32,7 @@ export default {
         const {displayName} = profile
         changeUserName(displayName)
       }).catch(e => {
-        console.log('error', e)
+        console.log(e)
       })
     }
     const initLiff = () => {
