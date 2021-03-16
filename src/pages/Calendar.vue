@@ -55,20 +55,38 @@
   </div>
   <!-- button -->
   <div class="fx fx-jcc mt-4">
-    <button class="btn btn-primary" @click="addNewEvent">{{submitBtn.text}}</button>
+    <button class="btn btn-primary" @click="showEventCreate">{{submitBtn.text}}</button>
   </div>
   <!-- dialog -->
   <CalendarMonthSelect v-if="isShowMonthCalendar"
     :current="selectedDate"
     @select-date="selectDateFromMonth"
     @on-close="showMonthCalendar(false)" />
+  <CustomDialog v-if="isShowEventPicker" @on-close="handleTimePickAction">
+    <template #header>
+      <h3>新增預約</h3>
+    </template>
+    <template #content>
+      <p class="mb-1">每次預約將花費您1個小時</p>
+      <span class="mr-1">預約時段/</span>
+      <select v-model="timeNoon">
+        <option value="am">上午</option>
+        <option value="pm">下午</option>
+      </select>
+      <span class="ml-3 mr-1">預約時間/</span>
+      <select v-model="timeHour">
+        <option v-for="num in 12" :key="num" :value="`${num}:00`">{{num}}:00</option>
+      </select>
+    </template>
+  </CustomDialog>
 </template>
 
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed, toRefs, reactive, watchEffect} from 'vue'
+import {ref, computed, toRefs, reactive} from 'vue'
 import CustomSelector from '@/components/utils/CustomSelector'
+import CustomDialog from '@/components/utils/CustomDialog'
 import CalendarMonthSelect from '@/components/calendar/CalendarMonthSelect'
 
 export default {
@@ -76,6 +94,7 @@ export default {
   components: {
     VueCal,
     CustomSelector,
+    CustomDialog,
     CalendarMonthSelect
   },
   props: {
@@ -157,7 +176,6 @@ export default {
       })
     }
     showWeekDays(selectedDate.value)
-
     // [listen] 監聽畫面變化
     const handleViewChange = (e) => {
       let {view, startDate} = e
@@ -173,18 +191,13 @@ export default {
       }
     }
 
+    // 變更送出按鈕的文字
     const submitBtn = computed(() => isMonthView.value
       ? {type: 'select', text: '選擇', func: chooseDate}
       : {type: 'add', text: '+ 新增預約', func: addNewEvent}
     )
-    const addNewEvent = () => {
-      vuecal.value.createEvent('2021-03-20 11:00', 60*1, {
-        title: 'A new event',
-        content: 'do something',
-        class: 'blue-event'
-      })
-    }
-
+    
+    // 顯示日曆來選擇日期
     const isShowMonthCalendar = ref(false)
     const showMonthCalendar = (state) => {
       isShowMonthCalendar.value = state
@@ -194,6 +207,7 @@ export default {
       showMonthCalendar(false)
     }
 
+    // 使用者選項: 登入/登出
     const userSettingDefault = [{key: 'login', title: '登入'}, {key: 'logout', title: '登出'}]
     const userSetting = computed(() => userSettingDefault.filter(item => {
         const showOption = username.value === '訪客' ? 'login' : 'logout'
@@ -204,8 +218,35 @@ export default {
       emit(key)
     }
 
-    const dayViewHeight = computed(() => window.innerHeight*0.6)
-    watchEffect(() => { console.log(dayViewHeight.value) })
+    // 預約時間
+    const isShowEventPicker = ref(false)
+    const showEventCreate = (state) => {
+      isShowEventPicker.value = state
+    }
+    // 建立新任務
+    const addNewEvent = (time) => {
+      vuecal.value.createEvent(`${selectedDate.value} ${time}`, 60*1, {
+        title: '預約',
+        content: '換電池',
+        class: 'blue-event'
+      })
+    }
+    const timeNoon = ref('am')
+    const timeHour = ref('1:00')
+    const handleTimePickAction = (action) => {
+      console.log(action)
+      if (action === 'success') {
+        let time = timeNoon.value === 'am' && timeHour.value === '12:00'
+          ? '0:00'
+          : timeNoon.value === 'pm'
+            ? timeHour.value.split(':').reduce((all, curr, idx) => {
+                return [...all, idx === 0 ? Number(curr) + 12 : curr]
+              }, []).join(':')
+            : timeHour.value
+        addNewEvent(time)
+      }
+      showEventCreate(false)
+    }
 
     return {
       currentUser,
@@ -235,7 +276,12 @@ export default {
       selectDateFromMonth,
       showMonthCalendar,
       isShowMonthCalendar,
-      dayViewHeight
+      // add
+      timeHour,
+      timeNoon,
+      handleTimePickAction,
+      isShowEventPicker,
+      showEventCreate
     }
   }
 }
