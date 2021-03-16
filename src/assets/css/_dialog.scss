@@ -1,0 +1,29 @@
+.custom-dialog {
+  &__cover {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(#000, 0.7);
+    z-index: 9;
+  }
+  &__main {
+    width: 80%;
+    max-width: 500px;
+    margin: auto;
+    margin-top: 10%;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 10px;
+    @include screen375() {
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      border-radius: 0;
+    }
+  }
+  &__header {
+
+  }
+}

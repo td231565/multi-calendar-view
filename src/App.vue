@@ -4,7 +4,7 @@
 
 <script>
 import liff from '@line/liff'
-import Calendar from './components/Calendar.vue'
+import Calendar from './pages/Calendar.vue'
 import {ref} from 'vue'
 
 export default {

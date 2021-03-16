@@ -17,7 +17,7 @@
     </div>
     <!-- week bar -->
     <div class="fx fx-jsb fx-aic">
-      <button class="calendar-switch-btn bg-secondary circle mr-1" @click="callMonth"></button>
+      <button class="calendar-switch-btn bg-secondary circle mr-1" @click="showMonthCalendar(true)"></button>
       <div v-if="!isMonthView" class="calendar-weeks-bar fx fx-jsb">
         <div v-for="(date, idx) in weekDateNumber"
           :key="date"
@@ -50,27 +50,33 @@
       :disableViews="['years', 'year']"
       class="vuecal--rounded-theme custom-theme"
       :selected-date="selectedDate"
-      :events="calendarEvents"
       @cell-focus="chooseDate"
       @view-change="handleViewChange" />
   </div>
   <!-- button -->
   <div class="fx fx-jcc mt-4">
-    <button class="btn btn-primary">{{submitText}}</button>
+    <button class="btn btn-primary" @click="addNewEvent">{{submitBtn.text}}</button>
   </div>
+  <!-- dialog -->
+  <CalendarMonthSelect v-if="isShowMonthCalendar"
+    :current="selectedDate"
+    @select-date="selectDateFromMonth"
+    @on-close="showMonthCalendar(false)" />
 </template>
 
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed, toRefs, reactive, watchEffect} from 'vue'
-import CustomSelector from './CustomSelector'
+import {ref, computed, toRefs, reactive} from 'vue'
+import CustomSelector from '@/components/utils/CustomSelector'
+import CalendarMonthSelect from '@/components/calendar/CalendarMonthSelect'
 
 export default {
   name: 'Calendar',
   components: {
     VueCal,
-    CustomSelector
+    CustomSelector,
+    CalendarMonthSelect
   },
   props: {
     username: {
@@ -114,7 +120,7 @@ export default {
 
     // Vue Calendar 實體
     const vuecal = ref(null)
-    const calendarEvents = ref([]) // 事件列表
+    const bookingList = ref([]) // 預約列表
 
     // 選擇日期
     const selectedDate = ref('') // 目前日期
@@ -167,15 +173,27 @@ export default {
       }
     }
 
-    const submitText = computed(() => isMonthView.value ? '選擇' : '+ 新增預約')
+    const submitBtn = computed(() => isMonthView.value
+      ? {type: 'select', text: '選擇', func: chooseDate}
+      : {type: 'add', text: '+ 新增預約', func: addNewEvent}
+    )
     const addNewEvent = () => {
-      calendarEvents.value.push({
-        start: '2020-03-20 12:00',
-        end: '2020-03-20 14:00',
+      vuecal.value.createEvent('2021-03-20 11:00', 60*1, {
         title: 'A new event',
+        content: 'do something',
         class: 'blue-event'
       })
     }
+
+    const isShowMonthCalendar = ref(false)
+    const showMonthCalendar = (state) => {
+      isShowMonthCalendar.value = state
+    }
+    const selectDateFromMonth = (date) => {
+      chooseDate(date)
+      showMonthCalendar(false)
+    }
+
     const userSettingDefault = [{key: 'login', title: '登入'}, {key: 'logout', title: '登出'}]
     const userSetting = computed(() => userSettingDefault.filter(item => {
         const showOption = username.value === '訪客' ? 'login' : 'logout'
@@ -204,12 +222,16 @@ export default {
       changeDate,
       getLocalDateString,
       // Event Listener
-      calendarEvents,
+      bookingList,
       handleViewChange,
       addNewEvent,
       handleUserLogState,
-      submitText,
-      userSetting
+      submitBtn,
+      userSetting,
+      // dialog
+      selectDateFromMonth,
+      showMonthCalendar,
+      isShowMonthCalendar
     }
   }
 }
