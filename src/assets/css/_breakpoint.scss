@@ -3,3 +3,9 @@
     @content;
   }
 }
+
+@mixin screen414 {
+  @media (max-width: 415px) {
+    @content;
+  }
+}

@@ -38,7 +38,7 @@
     </div>
   </section>
   <!-- calendar -->
-  <div :style="!isMonthView ? 'height: 70vh;' : ''" ref="container">
+  <div class="calendar-container">
     <VueCal ref="vuecal"
       hide-view-selector
       hide-title-bar
@@ -67,7 +67,7 @@
 <script>
 import VueCal from 'vue-cal'
 import 'vue-cal/dist/vuecal.css'
-import {ref, computed, toRefs, reactive} from 'vue'
+import {ref, computed, toRefs, reactive, watchEffect} from 'vue'
 import CustomSelector from '@/components/utils/CustomSelector'
 import CalendarMonthSelect from '@/components/calendar/CalendarMonthSelect'
 
@@ -204,6 +204,9 @@ export default {
       emit(key)
     }
 
+    const dayViewHeight = computed(() => window.innerHeight*0.6)
+    watchEffect(() => { console.log(dayViewHeight.value) })
+
     return {
       currentUser,
       activeView,
@@ -231,7 +234,8 @@ export default {
       // dialog
       selectDateFromMonth,
       showMonthCalendar,
-      isShowMonthCalendar
+      isShowMonthCalendar,
+      dayViewHeight
     }
   }
 }

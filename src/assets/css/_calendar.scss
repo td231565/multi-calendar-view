@@ -84,4 +84,11 @@
       }
     }
   }
+
+  &-container {
+    height: 72vh;
+    @include screen414() {
+      height: 52vh;
+    }
+  }
 }
